@@ -13,24 +13,41 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+func readInput(reader *bufio.Reader, prompt string) string {
+	fmt.Print(prompt)
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		fmt.Println("Error reading input:", err)
+		return ""
+	}
+	return strings.Trim(input, "\r\n")
+}
+
 func main() {
-	conn, _ := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		fmt.Println("Failed to connect:", err)
+		return
+	}
 	defer conn.Close()
 
 	client := proto.NewChatServiceClient(conn)
-
 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Print("username:")
-	name, _ := reader.ReadString('\n')
-	name = strings.Trim(name, "\r\n")
+	name := readInput(reader, "username:")
+	roomIdStr := readInput(reader, "roomId:")
+	roomId, err := strconv.ParseUint(roomIdStr, 10, 32)
+	if err != nil {
+		fmt.Println("Failed to parse room ID:", err)
+		return
+	}
 
-	fmt.Print("roomId:")
-	roomIdStr, _ := reader.ReadString('\n')
-	roomIdStr = strings.Trim(roomIdStr, "\r\n")
-	roomId, _ := strconv.ParseUint(roomIdStr, 10, 32)
+	stream, err := client.ChatStream(context.Background())
+	if err != nil {
+		fmt.Println("Failed to open stream:", err)
+		return
+	}
 
-	stream, _ := client.ChatStream(context.Background())
 	go func() {
 		for {
 			msg, _ := stream.Recv()
