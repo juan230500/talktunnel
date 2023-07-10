@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "./";
+
+package talktunnel;
+
+service ChatService {
+  rpc ChatStream (stream Message) returns (stream Message) {}
+}
+
+message Message {
+  string text = 1;
+  string name = 2;
+  uint32 roomId = 3;
+}
+
+
