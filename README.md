@@ -50,7 +50,7 @@ Here's a breakdown of the main components:
 
 2. **Install PostgreSQL**: You will also need PostgreSQL for the chat messages database. You can download it from the official [PostgreSQL Downloads Page](https://www.postgresql.org/download/).
 
-3. **Clone the repository**: Clone this repository to your local machine using `git clone https://github.com/yourusername/your-repository.git`.
+3. **Clone the repository**: Clone this repository to your local machine using `git clone https://github.com/juan230500/talktunnel.git`.
 
 4. **Set up the database**: Start your PostgreSQL server and create a new database named `chatDB`. You can adjust the database configuration in `db.go`.
 
